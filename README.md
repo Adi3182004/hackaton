@@ -47,11 +47,7 @@ Street vendors often face:
 
 ## 🖥 Screenshots / Demo
 
-| Vendor Dashboard | Supplier Dashboard | Admin Panel |
-|------------------|--------------------|--------------|
-| ![Vendor](./screenshots/vendor.png) | ![Supplier](./screenshots/supplier.png) | ![Admin](./screenshots/admin.png) |
-
-🎥 *[Solution Video – Watch Now](#)* (Insert YouTube or Google Drive link)
+https://drive.google.com/file/d/1RyWUO9hxIxksDKWwRJaDg3b2u4UtRhw0/view?usp=drive_link
 
 ---
 
@@ -78,7 +74,26 @@ Street vendors often face:
 ---
 
 ## 📂 Folder Structure
-
+StreetSupplyHub/
+├── admin.html # Admin dashboard for user verification
+├── firebase.js # Firebase configuration
+├── firebase.json # Firebase hosting config
+├── firestore.rules # Firebase security rules
+├── firestore.indexes.json # Firestore indexes
+├── functions/ # Firebase functions (if any)
+├── index.html # Home page / landing
+├── login.html # Login page for all users
+├── register.html # Registration page
+├── waiting.html # Waiting for approval screen
+├── supplier.html # Supplier dashboard
+├── vendor.html # Vendor dashboard
+├── orderbutton.html # Animated order confirmation
+├── script.js # Main logic (UI + Firebase)
+├── style.css # Global styles
+├── logo.jpg # Logo image
+├── IDS and PASSWORDS.txt # (For demo/test credentials)
+├── LICENSE # Project license
+├── Streetsupplyhub.zip # Zipped source code
 
 ## ✨ Future Improvements
 
@@ -91,8 +106,9 @@ Street vendors often face:
 ---
 
 ## 🙌 Team
-
-
+Shravani Dakve - Frontend Development, UI/UX , Vendor Features
+Sara Dalvi – Supplier Features, Design & Testing 
+Aditya Andhalkar – Backend development, Admin Dashboard, Firestore Management
 
 
 ## 📢 Acknowledgments
