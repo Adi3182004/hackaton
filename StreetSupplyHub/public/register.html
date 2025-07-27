@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Register - StreetSupplyHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+  background: #f4f6f8;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+  text-align: center;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.role-select {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-size: 15px;
+}
+
+.role-select label {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.role-select input[type="radio"] {
+  margin-right: 6px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #1e40af;
+}
+
+#registerMsg {
+  font-size: 14px;
+  margin-top: 12px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #991b1b;
+  display: none;
+}
+
+.links {
+  margin-top: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.links a {
+  color: #2563eb;
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+  </style>
+
+  <!-- Firebase -->
+  <script type="module">
+  import { auth, db } from './firebase.js';
+  import {
+    createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    doc, setDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const domainCheck = {
+    vendor: '@vendorhub.ac.in',
+    supplier: '@supplierhub.ac.in',
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById("regEmail").addEventListener("input", () => {
+  msg.style.display = "none";
+});
+
+    const form = document.getElementById("registerForm");
+    const msg = document.getElementById("registerMsg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const roleInput = document.querySelector("input[name='role']:checked");
+      const role = roleInput ? roleInput.value : null;
+
+      msg.style.color = "red";
+
+      if (!email || !password || !role) {
+        msg.textContent = "❌ Fill all fields and select a role.";
+        return;
+      }
+
+      if (!email.endsWith(domainCheck[role])) {
+  const expectedDomain = domainCheck[role];
+  const currentDomain = email.substring(email.indexOf('@'));
+  window.alert(`⚠️ Invalid domain!\nYou selected "${role}", so your email must end with "${expectedDomain}".\n\nYou entered: "${currentDomain}"`);
+  msg.textContent = `❌ Email must end with ${expectedDomain}`;
+  msg.style.display = "block";
+  return;
+}
+
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const userId = userCred.user.uid;
+
+        await setDoc(doc(db, "users", userId), {
+          email: email,
+          role: role,
+          isApproved: false,
+          createdAt: Date.now()
+        });
+
+        localStorage.setItem("waitingUserId", userId);
+        window.location.href = "waiting.html";  // ✅ This will now work
+
+      } catch (error) {
+        if (error.message.includes("email-already-in-use")) {
+          msg.textContent = "⚠️ This email is already registered.";
+        } else {
+          msg.textContent = "❌ " + error.message;
+        }
+      }
+    });
+  });
+</script>
+
+</head>
+
+<body>
+  <div class="container">
+    <h2>Register for StreetSupplyHub</h2>
+    <form id="registerForm">
+      <input type="email" id="regEmail" placeholder="Enter email" required />
+      <input type="password" id="regPassword" placeholder="Enter password" required />
+
+      <div class="role-select">
+        <label><input type="radio" name="role" value="supplier"> supplier</label>
+        <label><input type="radio" name="role" value="vendor"> vendor</label>
+      </div>
+
+      <button type="submit">Register</button>
+      <p id="registerMsg"></p>
+
+      <div class="links">
+        <a href="login.html">Already have an account? Login</a> |
+        <a href="index.html">Back to Home</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

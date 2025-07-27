@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StreetSupplyHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+ <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #44b5c7, #34bbcd);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #004d40;
+      color: white;
+      padding: 1rem 2rem;
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links li a:hover {
+      color: #b2dfdb;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 90vh;
+      background: url('https://images.unsplash.com/photo-1598278316647-4ed4ab099c5a?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      color: white;
+    }
+
+    .hero-text h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-inline: auto;
+    }
+
+    .btn {
+      background-color: #00796b;
+      padding: 0.8rem 1.6rem;
+      border: none;
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #004d40;
+    }
+
+    /* Features */
+    .features {
+      padding: 4rem 2rem;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+
+    .features h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* About */
+    .about {
+      padding: 4rem 2rem;
+      background-color: #69bdd0;
+      text-align: center;
+    }
+
+    .about h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .about p {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      padding: 3rem 2rem;
+      background-color: #ffffff;
+      text-align: center;
+    }
+
+    .testimonials h2 {
+      margin-bottom: 1rem;
+    }
+
+    /* Contact */
+    .contact-section {
+      padding: 40px 0 0 0;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .contact-section h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 32px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .contact-section .highlight {
+      color: #19d6e3;
+    }
+
+    .contact-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .contact-map {
+      flex: 1 1 400px;
+    }
+
+    .contact-form {
+      flex: 1 1 500px;
+      background: #111;
+      padding: 32px 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+
+    .input-group .icon {
+      color: #19d6e3;
+      padding: 0 12px;
+      font-size: 1.2em;
+    }
+
+    .input-group input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      padding: 12px 8px;
+      width: 100%;
+      font-size: 1em;
+    }
+
+    .contact-form button {
+      margin-top: 12px;
+      background: #19d6e3;
+      color: #111;
+      border: none;
+      padding: 12px 0;
+      border-radius: 4px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .contact-form button:hover {
+      background: #13b1bb;
+    }
+
+    #formMessage {
+      margin-top: 10px;
+      color: #19d6e3;
+      font-weight: bold;
+      min-height: 20px;
+    }
+    
+
+    /* FAQ */
+    .faq-section {
+      background: #f0f0f0;
+      padding: 60px 20px;
+    }
+
+    .faq-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .faq {
+      background-color: transparent;
+      border: 1px solid #9fa4a8;
+      border-radius: 10px;
+      margin: 20px 0;
+      padding: 30px;
+      position: relative;
+      transition: 0.3s ease;
+    }
+
+    .faq.active {
+      background-color: #fff;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    .faq-title {
+      margin: 0 35px 0 0;
+    }
+
+    .faq-text {
+      display: none;
+      margin: 20px 0 0;
+    }
+
+    .faq.active .faq-text {
+      display: block;
+    }
+
+    .faq-toggle {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 16px;
+    }
+
+    .faq-toggle .fa-times {
+      display: none;
+    }
+
+    .faq.active .faq-toggle .fa-chevron-down {
+      display: none;
+    }
+
+    .faq.active .faq-toggle .fa-times {
+      display: inline;
+    }
+
+    .faq.active .faq-toggle {
+      background-color: #9fa4a8;
+      border-radius: 50%;
+      padding: 6px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #004d40;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    /* Voice Button */
+    #faq-mic-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      padding: 16px 20px;
+      border-radius: 50%;
+      background: #009688;
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .hero {
+  height: 100vh;
+  background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 2rem;
+}
+
+
+    .welcome-card {
+  background: rgba(98, 222, 226, 0.861); /* Semi-transparent teal */
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  color: #fff;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+
+    .hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.extra-message {
+  margin-top: 30px;
+  color: white;
+  max-width: 600px;
+}
+
+.extra-message h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.extra-message p {
+  font-size: 1.1rem;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="logo.jpg" alt="StreetSupplyHub Logo" class="logo-img" />
+        <span>StreetSupplyHub</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Login</a></li>
+        <!-- <li><a href="#">Home</a></li> -->
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+  <div class="hero-text">
+    <div class="content-wrapper">
+      <div class="welcome-card shadow-lg">
+        <h1>Welcome to StreetSupplyHub</h1>
+        <p>Your gateway to smart street supply solutions. Login or register to continue.</p>
+        <a href="login.html" class="btn btn-light">Login</a>
+        <a href="register.html" class="btn btn-outline-light">Register</a>
+        <a href="admin.html" class="btn btn-warning">Admin Login</a>
+      </div>
+
+      <!-- 👇 New content goes here 👇 -->
+      <div class="extra-message">
+        <h1>Empowering Street Vendors, Seamlessly</h1>
+        <p>Connect. Support. Grow. A digital platform built for vendors and small suppliers across India.</p>
+      </div>
+    </div>
+  </div>
+</section>
+  </header>
+
+  <!-- Features -->
+  <section class="features">
+    <h2>Key Features</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Vendor Registration</h3>
+        <p>Easy onboarding process for local vendors and suppliers.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Training & Resources</h3>
+        <p>Access to essential guides, tutorials, and financial literacy tools.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Support System</h3>
+        <p>On-demand help for vendors via chatbot and expert guidance.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Financial Aid</h3>
+        <p>Apply for government schemes and microloans directly through the portal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about">
+    <div class="about-content">
+      <h2>About StreetSupplyHub</h2>
+      <p>StreetSupplyHub is a social-tech initiative to connect underserved vendors with resources, policies, and market access.</p>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <h2>What Vendors Say</h2>
+    <p>[Testimonial carousel or quotes can be added here later]</p>
+  </section>
+
+  <!-- Contact Us -->
+  <section class="contact-section" id="contact">
+    <h2><span class="highlight">CONTACT</span> <span class="normal">US</span></h2>
+    <div class="contact-row">
+      <div class="contact-map">
+        <iframe src="https://www.google.com/maps?q=Noida,+Uttar+Pradesh&output=embed"
+          width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <div class="input-group">
+          <span class="icon"><i class="fa fa-user"></i></span>
+          <input type="text" placeholder="Name" required>
+        </div>
+        <div class="input-group">
+          <span class="icon"><i class="fa fa-envelope"></i></span>
+          <input type="email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <span class="icon"><i class="fa fa-phone"></i></span>
+          <input type="tel" placeholder="Phone Number" required>
+        </div>
+        <button type="submit">Contact Now</button>
+        <div id="formMessage"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <div class="faq-container">
+  <div class="faq active">
+    <h3 class="faq-title">What is StreetHub?</h3>
+    <p class="faq-text">StreetHub connects retailers and suppliers through group ordering for better deals.</p>
+    <button class="faq-toggle">
+      <i class="fas fa-chevron-down"></i>
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="faq">
+    <h3 class="faq-title">How do I join a group order?</h3>
+    <p class="faq-text">From the dashboard, select the item you need. If a group order exists, you’ll see a “Join Group” option. Click it and confirm your quantity.</p>
+    <button class="faq-toggle"><i class="fas fa-chevron-down"></i><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="faq">
+    <h3 class="faq-title">How do I place a new order?</h3>
+    <p class="faq-text">To place a new order, go to the dashboard, select your desired materials, choose quantity and supplier, then click “Place Order.”</p>
+    <button class="faq-toggle"><i class="fas fa-chevron-down"></i><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="faq">
+    <h3 class="faq-title">Where can I track my orders?</h3>
+    <p class="faq-text">Go to “My Orders” section from the sidebar or dashboard. You’ll see status updates like Pending, Shipped, or Delivered.</p>
+    <button class="faq-toggle"><i class="fas fa-chevron-down"></i><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="faq">
+    <h3 class="faq-title">Can I compare prices of different suppliers?</h3>
+    <p class="faq-text">Yes! When browsing items, use the “Compare” button next to each item. You’ll see supplier name, price, and delivery time.</p>
+    <button class="faq-toggle"><i class="fas fa-chevron-down"></i><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="faq">
+    <h3 class="faq-title">How can I contact a supplier?</h3>
+    <p class="faq-text">Click on the supplier name under the product listing. You’ll find their contact info or chat option available there.</p>
+    <button class="faq-toggle"><i class="fas fa-chevron-down"></i><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="faq">
+    <h3 class="faq-title">What payment methods are accepted?</h3>
+    <p class="faq-text">We accept UPI, Net Banking, Debit/Credit Cards, and selected wallets like Paytm or PhonePe.</p>
+    <button class="faq-toggle"><i class="fas fa-chevron-down"></i><i class="fas fa-times"></i></button>
+  </div>
+</div>
+
+  </section>
+
+
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 StreetSupplyHub. All rights reserved.</p>
+    <p>Built for community growth and empowerment.</p>
+  </footer>
+
+  <script>
+    // FAQ toggle
+    document.querySelectorAll('.faq-toggle').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        toggle.parentNode.classList.toggle('active');
+      });
+    });
+
+    // Contact form
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('formMessage').textContent = 'Thank you for contacting us!';
+      this.reset();
+    });
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Assistant</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <script src="https://kit.fontawesome.com/f784174103.js" crossorigin="anonymous"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Roboto", cursive;
+      box-sizing: border-box;
+    }
+
+    .assistant > .assistant__toggle {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 45px;
+      height: 45px;
+      background-color: white;
+      outline: 2px solid white;
+      border-radius: 50%;
+      outline-offset: 2px;
+      transition: all 0.5s;
+      z-index: 5;
+      cursor: pointer;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
+
+    .assistant > .assistant__toggle:hover {
+      transform: scale(0.95);
+    }
+
+    .assistant > .assistant__toggle > img {
+      object-fit: contain;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
+
+    .chatBox__container {
+      position: fixed;
+      right: 40px;
+      bottom: 40px;
+      border-radius: 5px;
+      overflow: hidden;
+      background-color: white;
+      transition: all 0.2s;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      z-index: 10000;
+    }
+
+    .chatBox {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      max-height: 400px;
+    }
+
+    .chatBox__head {
+      display: flex;
+      align-items: center;
+      background-color: #002b57;
+      box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+        rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    }
+
+    .chatBox__closeBtn {
+      display: grid !important;
+      place-items: center;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: white;
+      background-color: red;
+      border: 2px solid white;
+      transition: all 0.5s;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .chatBox__closeBtn:hover {
+      filter: brightness(80%);
+      transform: scale(1.1);
+    }
+
+    .chatBox__chatInfo {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      margin: 2px;
+      margin-bottom: 0;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+
+    .chatBox__nyraInfo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chatBox__chatInfo .chatBox__avatar {
+      height: 35px;
+      width: 35px;
+      margin-right: 10px;
+      background-color: white;
+      outline: 2px solid white;
+      outline-offset: 2px;
+      border-radius: 50%;
+    }
+
+    .chatBox__nyraInfo > p {
+      color: white;
+      font-weight: 500;
+    }
+
+    .chatBox__nyraInfo > p:nth-child(1) {
+      font-size: 18px;
+    }
+
+    .chatBox__nyraInfo > p:nth-child(2) {
+      font-size: 13px;
+    }
+
+    .chatBox__welcomeMsg {
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      color: grey;
+      width: 80%;
+      margin: 10px auto;
+    }
+
+    .chatBox__messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+      margin: 0 2px;
+      scroll-behavior: smooth;
+    }
+
+    .chatBox__messages::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chatBox__messages::-webkit-scrollbar-thumb {
+      background-color: lightgray;
+    }
+
+    .chatBox__messages::-webkit-scrollbar-track {
+      background-color: white;
+    }
+
+    .chatBox__newMessage {
+      display: flex;
+      align-items: center;
+      padding: 5px 10px;
+      box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+        rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    }
+
+    .chatBox__newMessage > input {
+      flex: 1;
+      height: 100%;
+      font-size: 15px;
+      border: none;
+      outline: none;
+    }
+
+    .chatBox__newMessage > i {
+      padding: 5px;
+      color: #1976d2;
+      border-radius: 50%;
+      background-color: white;
+      border: 2px solid #1976d2;
+      cursor: pointer;
+      transition: all 0.5s;
+      margin-left: 10px;
+    }
+
+    .chatBox__newMessage > i:nth-child(1) {
+      color: grey;
+      margin-right: 10px;
+      margin-left: 0;
+      border: none;
+    }
+
+    .chatBox__newMessage > i:hover {
+      transform: scale(1.1);
+    }
+
+    @media only screen and (max-width: 350px) {
+      .chatBox__container {
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+
+    .chatBubble {
+      max-width: 80%;
+      width: fit-content;
+      min-width: 150px;
+      position: relative;
+      border-radius: 10px;
+      padding: 8px;
+      padding-bottom: 25px;
+      margin: 0 20px;
+      margin-bottom: 10px;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      animation: chatBubble__appear 0.2s linear 1;
+    }
+
+    .chatBubble:after {
+      content: "";
+      position: absolute;
+      border: 10px solid transparent;
+      bottom: 0px;
+    }
+
+    .chatBubble__left {
+      color: rgb(65, 0, 0);
+      background-color: rgb(255, 213, 219);
+    }
+
+    .chatBubble__right {
+      align-self: flex-end;
+      text-align: right;
+      color: rgb(0, 65, 65);
+      background: hsl(163, 100%, 87%);
+    }
+
+    .chatBubble__left:after {
+      left: -10px;
+      border-bottom-color: lightpink;
+    }
+
+    .chatBubble__right:after {
+      right: -10px;
+      border-bottom-color: #96cabb;
+    }
+
+    .chatBubble__content {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .chatBubble__date {
+      position: absolute;
+      bottom: 5px;
+      font-size: 10px;
+    }
+
+    @keyframes chatBubble__appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="assistant">
+    <div class="assistant__toggle" onclick="handleOpen()">
+      <img src="https://avatars.dicebear.com/api/avataaars/2.svg" alt="" />
+    </div>
+    <div class="chatBox__container">
+      <div class="chatBox">
+        <div class="chatBox__head">
+          <div class="chatBox__chatInfo">
+            <img class="chatBox__avatar" src="https://avatars.dicebear.com/api/avataaars/2.svg" alt="" />
+            <div class="chatBox__nyraInfo">
+              <p>Nyra</p>
+              <p>Your virtual assistant!</p>
+            </div>
+          </div>
+          <i class="chatBox__closeBtn fas fa-times" onclick="handleClose()"></i>
+        </div>
+        <div class="chatBox__messages">
+          <p class="chatBox__welcomeMsg">This is Nyra, your very own personal assistant.<br /></p>
+        </div>
+        <form class="chatBox__newMessage">
+          <i class="fas fa-microphone" onclick="listenSpeech()"></i>
+          <input placeholder="Type your question." />
+          <i class="chatBox__sendBtn fas fa-arrow-right"></i>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatBoxContainer = document.querySelector(".chatBox__container");
+    function handleClose() {
+      chatBoxContainer.style.transform = "scale(0)";
+    }
+    function handleOpen() {
+      if (!chatBoxContainer.style.transform || chatBoxContainer.style.transform === "scale(1)")
+        chatBoxContainer.style.transform = "scale(0)";
+      else chatBoxContainer.style.transform = "scale(1)";
+    }
+
+    const synth = window.speechSynthesis;
+    function saySpeech(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-IN";
+      synth.speak(utterance);
+    }
+
+    function addUserMessage(text) {
+      const chatBox = document.querySelector('.chatBox__messages');
+      if (!chatBox) return;
+      const bubble = document.createElement('div');
+      bubble.className = 'chatBubble chatBubble__right';
+      bubble.innerHTML = `<p class="chatBubble__content">${text}</p><p class="chatBubble__date">${new Date().toLocaleString()}</p>`;
+      chatBox.appendChild(bubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addBotMessage(text) {
+      const chatBox = document.querySelector('.chatBox__messages');
+      if (!chatBox) return;
+      const bubble = document.createElement('div');
+      bubble.className = 'chatBubble chatBubble__left';
+      bubble.innerHTML = `<p class="chatBubble__content">${text}</p><p class="chatBubble__date">${new Date().toLocaleString()}</p>`;
+      chatBox.appendChild(bubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      saySpeech(text);
+    }
+
+    function processCommand(command) {
+      const cmd = command.toLowerCase();
+      if (cmd.includes("browse suppliers")) {
+        addBotMessage("Redirecting to supplier list.");
+        window.location.href = "/vendors/browse-suppliers.html";
+      } else if (cmd.includes("join group order")) {
+        addBotMessage("Joining a group order now.");
+        window.location.href = "/vendors/group-orders.html";
+      } else if (cmd.includes("place order")) {
+        addBotMessage("Opening the order placement page.");
+        window.location.href = "/vendors/place-order.html";
+      } else if (cmd.includes("confirm order")) {
+        addBotMessage("Taking you to confirm the order.");
+        window.location.href = "/vendors/confirm-order.html";
+      } else if (cmd.includes("faq") || cmd.includes("help")) {
+        addBotMessage("Opening frequently asked questions.");
+        window.location.href = "/faq.html";
+      } else if (cmd.includes("hello") || cmd.includes("hi")) {
+        addBotMessage("Hello! How can I assist you today?");
+      } else if (cmd.includes("thank you") || cmd.includes("thanks")) {
+        addBotMessage("You're welcome! Let me know if you need anything else.");
+      } else if (cmd.includes("who are you")) {
+        addBotMessage("I'm Nyra, your virtual assistant. I can help you with orders, suppliers, and FAQs.");
+      } else {
+        addBotMessage("I'm sorry, I didn't understand that. You can ask me about suppliers, group orders, placing orders, or FAQs.");
+      }
+    }
+
+    function listenSpeech() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Your browser does not support Speech Recognition. Try Chrome on desktop.");
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.interimResults = false;
+      recognition.continuous = false;
+      recognition.start();
+      recognition.onresult = function (event) {
+        const command = event.results[0][0].transcript;
+        addUserMessage(command);
+        processCommand(command);
+      };
+      recognition.onerror = function () {
+        addBotMessage("Sorry, I couldn't understand. Please try again.");
+      };
+    }
+
+    document.querySelector('.chatBox__newMessage').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const input = this.querySelector('input');
+      const message = input.value.trim();
+      if (message) {
+        addUserMessage(message);
+        processCommand(message);
+        input.value = '';
+      }
+    });
+
+    document.querySelector('.chatBox__sendBtn').addEventListener('click', function () {
+      const form = this.closest('form');
+      const input = form.querySelector('input');
+      const message = input.value.trim();
+      if (message) {
+        addUserMessage(message);
+        processCommand(message);
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
+

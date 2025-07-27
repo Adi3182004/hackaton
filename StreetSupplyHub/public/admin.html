@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin Panel | StreetSupplyHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f4f6;
+  padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 720px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0 16px 0;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #2563eb;
+  outline: none;
+  background-color: #fff;
+}
+
+button {
+  display: inline-block;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 6px 0;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #1d4ed8;
+}
+
+.user-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 18px;
+  background: #f8fafc;
+}
+
+.user-card strong {
+  color: #111827;
+}
+
+.status {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.actions button {
+  margin-right: 10px;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.delete-btn {
+  background-color: #dc2626;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
+}
+
+.logout-btn {
+  margin-top: 32px;
+  background-color: #ef4444;
+}
+
+.logout-btn:hover {
+  background-color: #b91c1c;
+}
+
+.message {
+  font-size: 14px;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 8px;
+}
+
+.success {
+  background: #ecfdf5;
+  border: 1px solid #34d399;
+  color: #065f46;
+}
+
+.error {
+  background: #fef2f2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+}
+
+option.pending-count {
+  color: #b91c1c;
+  font-weight: bold;
+}
+
+  </style>
+</head>
+<body>
+
+<div class="container" id="loginCard">
+  <h2>Admin Login</h2>
+  <input type="email" id="adminEmail" placeholder="Admin email" />
+  <input type="password" id="adminPass" placeholder="Admin password" />
+  <button onclick="adminLogin()">Login as Admin</button>
+  <div class="message" id="loginMsg"></div>
+</div>
+
+<div class="container" id="dashboard" style="display:none;">
+  <h2>Users</h2>
+  <select id="roleFilter" onchange="loadUsers()">
+    <option value="vendor">vendor</option>
+    <option value="supplier">supplier</option>
+    <option value="pending">Pending Requests</option>
+  </select>
+  <input type="text" id="searchEmail" placeholder="Search email or domain (e.g. @vendorhub.ac.in)" oninput="loadUsers()" />
+  <div id="userList">Loading users...</div>
+
+  <div class="message" id="manualMsg"></div>
+  <h2>Create New User</h2>
+  <input type="email" id="manualEmail" placeholder="User Email" />
+  <input type="password" id="manualPass" placeholder="Set Password" />
+  <select id="manualRole">
+    <option value="vendor">vendor</option>
+    <option value="supplier">supplier</option>
+  </select>
+  <button onclick="addUser()">Create User</button>
+  <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase.js';
+  import {
+    createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    collection, getDocs, doc, updateDoc, deleteDoc, setDoc, addDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const adminEmail = "adi31@admin.in";
+  const adminPass = "adi3182004";
+
+  const loginCard = document.getElementById("loginCard");
+  const dashboard = document.getElementById("dashboard");
+  const loginMsg = document.getElementById("loginMsg");
+  const roleFilter = document.getElementById("roleFilter");
+
+  if (localStorage.getItem("adminLoggedIn") === "true") {
+    loginCard.style.display = "none";
+    dashboard.style.display = "block";
+    loadUsers();
+  }
+
+  async function adminLogin() {
+    const email = document.getElementById('adminEmail').value.trim();
+    const pass = document.getElementById('adminPass').value.trim();
+
+    if (email === adminEmail && pass === adminPass) {
+      localStorage.setItem("adminLoggedIn", "true");
+      loginCard.style.display = "none";
+      dashboard.style.display = "block";
+      loadUsers();
+    } else {
+      loginMsg.className = "message error";
+      loginMsg.textContent = '❌ Invalid admin credentials.';
+    }
+  }
+
+  async function loadUsers() {
+    const selectedRole = roleFilter.value;
+    const searchValue = document.getElementById("searchEmail").value.trim().toLowerCase();
+    const snapshot = await getDocs(collection(db, "users"));
+    const userList = document.getElementById("userList");
+    userList.innerHTML = '';
+
+    let found = false;
+    let pendingCount = 0;
+    const usersToDisplay = [];
+
+    snapshot.forEach(docSnap => {
+      const user = docSnap.data();
+      const uid = docSnap.id;
+      const emailMatch = user.email.toLowerCase().includes(searchValue);
+
+      if (!emailMatch && searchValue !== "") return;
+
+      if (user.role === 'supplier' && !user.isApproved && selectedRole === 'pending') {
+        usersToDisplay.push({ uid, user });
+        pendingCount++;
+      } else if (selectedRole === 'vendor' && user.role === 'vendor') {
+        usersToDisplay.push({ uid, user });
+      } else if (selectedRole === 'supplier' && user.role === 'supplier' && user.isApproved) {
+        usersToDisplay.push({ uid, user });
+      }
+    });
+
+    const pendingOption = Array.from(roleFilter.options).find(opt => opt.value === 'pending');
+    if (pendingOption) {
+      pendingOption.textContent = `Pending Requests${pendingCount > 0 ? ` (${pendingCount})` : ''}`;
+      if (pendingCount > 0) pendingOption.classList.add('pending-count');
+      else pendingOption.classList.remove('pending-count');
+    }
+
+    usersToDisplay.forEach(({ uid, user }) => {
+      found = true;
+
+      const card = document.createElement("div");
+      card.className = "user-card";
+
+      card.innerHTML = `
+        <div><strong>${user.email}</strong> (${user.role})</div>
+        <div class="status">Approved: ${user.isApproved ? '✅' : '❌'} | Blocked: ${user.isBlocked ? '🚫' : '🟢'}</div>
+      `;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      if (!user.isApproved) {
+        const approveBtn = document.createElement("button");
+        approveBtn.textContent = "✅ Approve";
+        approveBtn.onclick = () => updateDocStatus(uid, { isApproved: true });
+        actions.appendChild(approveBtn);
+      } else {
+        const blockBtn = document.createElement("button");
+        blockBtn.textContent = user.isBlocked ? "🟢 Unblock" : "🚫 Block";
+        blockBtn.onclick = () => updateDocStatus(uid, { isBlocked: !user.isBlocked });
+        actions.appendChild(blockBtn);
+      }
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "🗑️ Delete";
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.onclick = () => deleteUser(uid);
+      actions.appendChild(deleteBtn);
+
+      card.appendChild(actions);
+
+      const msgInput = document.createElement("input");
+      msgInput.placeholder = "Message user…";
+      msgInput.style.width = "calc(100% - 20px)";
+      msgInput.style.marginTop = "10px";
+
+      const sendBtn = document.createElement("button");
+      sendBtn.textContent = "📨 Send Message";
+      sendBtn.onclick = async () => {
+        const text = msgInput.value.trim();
+        if (!text) return alert("Message is empty");
+        await addDoc(collection(db, "messages", uid, "messages"), {
+          sender: "admin",
+          text,
+          timestamp: Date.now()
+        });
+        alert("✅ Message sent.");
+        msgInput.value = "";
+      };
+
+      card.appendChild(msgInput);
+      card.appendChild(sendBtn);
+
+      userList.appendChild(card);
+    });
+
+    if (!found) {
+      userList.innerHTML = `<p>No ${selectedRole} users found.</p>`;
+    }
+  }
+
+  async function addUser() {
+    const email = document.getElementById('manualEmail').value.trim();
+    const password = document.getElementById('manualPass').value.trim();
+    const role = document.getElementById('manualRole').value;
+    const msg = document.getElementById('manualMsg');
+    msg.className = "message";
+
+    if (!email || !password || !role) {
+      msg.classList.add("error");
+      msg.textContent = "❗ Please fill all fields.";
+      return;
+    }
+
+    const domainCheck = {
+      vendor: '@vendorhub.ac.in',
+      supplier: '@supplierhub.ac.in',
+    };
+
+    if (!email.endsWith(domainCheck[role])) {
+      msg.classList.add("error");
+      msg.textContent = `❌ Email must end with ${domainCheck[role]}.`;
+      return;
+    }
+
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", userCred.user.uid), {
+        email,
+        role,
+        isApproved: true,
+        isBlocked: false
+      });
+      msg.classList.add("success");
+      msg.textContent = `✅ User ${email} created successfully.`;
+      loadUsers();
+    } catch (error) {
+      msg.classList.add("error");
+      if (error.code === "auth/email-already-in-use") {
+        msg.textContent = `❌ This email is already registered.`;
+      } else if (error.code === "auth/invalid-email") {
+        msg.textContent = `❌ Invalid email format.`;
+      } else if (error.code === "auth/weak-password") {
+        msg.textContent = `❌ Password too weak.`;
+      } else {
+        msg.textContent = `❌ Error: ${error.message}`;
+      }
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("adminLoggedIn");
+    window.location.href = "index.html";
+  }
+
+  window.adminLogin = adminLogin;
+  window.addUser = addUser;
+  window.loadUsers = loadUsers;
+  window.logout = logout;
+
+  async function updateDocStatus(uid, update) {
+    await updateDoc(doc(db, "users", uid), update);
+    loadUsers();
+  }
+
+  window.updateDocStatus = updateDocStatus;
+
+  async function deleteUser(uid) {
+    await deleteDoc(doc(db, "users", uid));
+    loadUsers();
+  }
+
+  window.deleteUser = deleteUser;
+</script>
+</body>
+</html>

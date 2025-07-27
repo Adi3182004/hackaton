@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supplier Dashboard - StreetSupply Hub</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background-color: #f3f4f6;
+      color: #333;
+    }
+    .logo {
+      width: 60px;
+      height: auto;
+      display: block;
+    }
+    .site-header {
+      display: flex;
+      align-items: center;
+      background-color: #00796b;
+      color: white;
+      padding: 1rem 2rem;
+      gap: 1rem;
+      border-radius: 0 0 10px 10px;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+    nav button {
+      padding: 0.6rem 1.2rem;
+      background: #004d40;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    nav button:hover {
+      background: #00695c;
+    }
+    section {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      margin-bottom: 1.2rem;
+      color: #00796b;
+      font-weight: 600;
+    }
+    input, textarea, select {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    button[type="submit"], .order-btn {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    button[type="submit"]:hover, .order-btn:hover {
+      background-color: #004d40;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 1rem;
+      background: #e0f2f1;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .preview-img {
+      max-width: 100px;
+      margin-right: 10px;
+      border-radius: 6px;
+      vertical-align: middle;
+    }
+    label {
+      font-weight: 500;
+      display: block;
+      margin-top: 1rem;
+      color: #555;
+    }
+    footer {
+      background-color: #004d40;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+    }
+    @media (max-width: 600px) {
+      .site-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      nav {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <img src="logo.jpg" alt="SupplyHub Logo" class="logo"/>
+    <h1>Supplier Dashboard - StreetSupply Hub</h1>
+  </header>
+
+  <nav>
+    <button onclick="showSection('add')">Add Product</button>
+    <button onclick="showSection('manage')">Manage Products</button>
+    <button onclick="showSection('orders')">Orders</button>
+    <button onclick="showSection('analytics')">Analytics</button>
+  </nav>
+
+  <main>
+    <section id="add">
+      <h2>Add New Product</h2>
+      <p>Supplier Name</p>
+      <input type="text" id="supplierName" required />
+      <p>Contact Number</p>
+      <input type="tel" id="contactNumber" required />
+
+      <form onsubmit="addProduct(event)">
+        <p>Product Name</p>
+        <input type="text" id="productName" required />
+        <p>Price per kg (₹)</p>
+        <input type="number" id="productPrice" required />
+        <p>Stock Available (kg)</p>
+        <input type="number" id="productStock" required />
+        <p>Product Description</p>
+        <textarea id="productDesc"></textarea>
+        <p>Availability</p>
+        <select id="productStatus">
+          <option value="available">Available</option>
+          <option value="soldout">Sold Out</option>
+        </select>
+        <p>Product Images</p>
+        <input type="file" id="productImages" accept="image/*" multiple onchange="previewImages(event)" />
+        <div id="imagePreviewContainer"></div>
+        <button type="submit">Add Product</button>
+      </form>
+    </section>
+
+    <section id="manage" style="display:none">
+      <h2>Manage Products</h2>
+      <ul id="productList"></ul>
+    </section>
+
+    <section id="orders" style="display:none">
+      <h2>Vendor Orders</h2>
+      <ul id="orderList"></ul>
+    </section>
+
+    <section id="analytics" style="display:none">
+      <h2>Analytics</h2>
+      <p><strong>Total Orders:</strong> <span id="orderCount">0</span></p>
+      <p><strong>Average Rating:</strong> <span id="avgRating">4.2 ⭐</span></p>
+      <p><strong>Total Complaints:</strong> <span id="complaints">2</span></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 StreetSupply Hub</p>
+  </footer>
+
+  <!-- Firebase App SDK -->
+  <script type="module">
+    import { db } from './firebase.js';
+    import {
+      collection, addDoc, getDocs, updateDoc, doc, setDoc
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const productCollection = collection(db, 'supplierProducts');
+    const orderCollection = collection(db, 'supplierOrders');
+
+    window.showSection = async function(id) {
+      ['add', 'manage', 'orders', 'analytics'].forEach(sectionId => {
+        document.getElementById(sectionId).style.display = sectionId === id ? 'block' : 'none';
+      });
+
+      if (id === 'manage') await renderManage();
+      if (id === 'orders') await renderOrders();
+      if (id === 'analytics') await updateAnalytics();
+    }
+
+    window.previewImages = function(event) {
+      const container = document.getElementById('imagePreviewContainer');
+      container.innerHTML = '';
+      const files = Array.from(event.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'preview-img';
+          container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+   window.addProduct = async function(event) {
+  event.preventDefault();
+  try {
+    const name = document.getElementById('productName').value;
+    const price = parseFloat(document.getElementById('productPrice').value);
+    const stock = parseFloat(document.getElementById('productStock').value);
+    const desc = document.getElementById('productDesc').value;
+    const status = document.getElementById('productStatus').value;
+    const supplierName = document.getElementById('supplierName').value;
+    const contactNumber = document.getElementById('contactNumber').value;
+    const files = Array.from(document.getElementById('productImages').files);
+
+    const imagePromises = files.map(file => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    }));
+
+    const images = await Promise.all(imagePromises);
+
+    await addDoc(productCollection, {
+      name,
+      price,
+      stock,
+      desc,
+      status,
+      images,
+      supplierName,
+      contactNumber
+    });
+
+    event.target.reset();
+    document.getElementById('imagePreviewContainer').innerHTML = '';
+    alert('✅ Product added!');
+  } catch (err) {
+    console.error("❌ Error while adding product:", err);
+    alert("Something went wrong! Check console.");
+  }
+}
+
+
+    async function renderManage() {
+      const list = document.getElementById('productList');
+      list.innerHTML = '';
+
+      const snapshot = await getDocs(productCollection);
+      snapshot.forEach(docSnap => {
+        const p = docSnap.data();
+        const id = docSnap.id;
+
+        const imagesHtml = (p.images || []).map(img => `<img src="${img}" class="preview-img">`).join('');
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${p.name}</strong><br>
+          ₹${p.price} per kg | Stock: ${p.stock} kg<br>
+          ${p.desc || ''}<br>
+          ${imagesHtml}
+          <label>Status:</label>
+          <select onchange="updateStatus('${id}', this.value)">
+            <option value="available" ${p.status === 'available' ? 'selected' : ''}>Available</option>
+            <option value="soldout" ${p.status === 'soldout' ? 'selected' : ''}>Sold Out</option>
+          </select>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    window.updateStatus = async function (id, value) {
+      const ref = doc(db, 'supplierProducts', id);
+      await updateDoc(ref, { status: value });
+    }
+
+    async function renderOrders() {
+      const list = document.getElementById('orderList');
+      list.innerHTML = '';
+
+      const snapshot = await getDocs(orderCollection);
+      snapshot.forEach((docSnap) => {
+        const o = docSnap.data();
+        const id = docSnap.id;
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${o.productName}</strong><br>
+          Quantity: ${o.quantity} kg<br>
+          Status: <strong>${o.status}</strong><br>
+          <button class="order-btn" onclick="updateOrderStatus('${id}', 'accepted')">✅ Accept</button>
+          <button class="order-btn" onclick="updateOrderStatus('${id}', 'declined')">❌ Decline</button>
+          <button class="order-btn" onclick="updateOrderStatus('${id}', 'dispatched')">📦 Dispatch</button>
+          <button class="order-btn" onclick="updateOrderStatus('${id}', 'delivered')">✅ Delivered</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    window.updateOrderStatus = async function (id, status) {
+      const ref = doc(db, 'supplierOrders', id);
+      await updateDoc(ref, { status });
+      await renderOrders();
+      await updateAnalytics();
+    }
+
+    async function updateAnalytics() {
+      const snapshot = await getDocs(orderCollection);
+      document.getElementById('orderCount').innerText = snapshot.size;
+      document.getElementById('avgRating').innerText = '4.2 ⭐';
+      document.getElementById('complaints').innerText = '2';
+    }
+
+    async function simulateOrders() {
+      const snapshot = await getDocs(orderCollection);
+      if (snapshot.empty) {
+        await setDoc(doc(orderCollection, '1'), {
+          productName: 'Tomatoes',
+          quantity: 10,
+          status: 'pending'
+        });
+        await setDoc(doc(orderCollection, '2'), {
+          productName: 'Onions',
+          quantity: 5,
+          status: 'pending'
+        });
+      }
+    }
+
+    await simulateOrders();
+    await showSection('add');
+  </script>
+</body>
+</html>

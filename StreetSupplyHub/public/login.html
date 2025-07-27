@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | StreetSupplyHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+    }
+    .login-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #111827;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    #loginMsg {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #fee2e2;
+      color: #b91c1c;
+      font-size: 14px;
+      display: none;
+    }
+    .link-btn {
+      margin-top: 15px;
+      display: block;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .link-btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+  import { auth, db } from "./firebase.js";
+  import {
+    signInWithEmailAndPassword,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getDoc,
+    doc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"; // ✅ add this
+
+  window.loginUser = async function () {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const msg = document.getElementById("loginMsg");
+    msg.style.display = "block";
+    msg.style.backgroundColor = "#fee2e2";
+    msg.style.color = "#b91c1c";
+
+    if (!email || !password) {
+      msg.textContent = "❌ Please enter both email and password.";
+      return;
+    }
+
+    if (email === "adi31@admin.in" && password === "adi3182004") {
+      window.location.href = "admin.html";
+      return;
+    }
+
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCred.user.uid;
+
+      // ✅ get user document
+      const userDoc = await getDoc(doc(db, "users", uid));
+      const data = userDoc.exists() ? userDoc.data() : null;
+
+      if (!data || !data.isApproved) {
+        msg.textContent = "🚫 Not approved by admin yet.";
+        await signOut(auth);
+        return;
+      }
+
+      if (data.role === "supplier") {
+        window.location.href = "supplier.html";
+      } else if (data.role === "vendor") {
+        window.location.href = "vendor.html";
+      } else {
+        msg.textContent = "❌ Unknown role.";
+      }
+    } catch (err) {
+      msg.textContent = "❌ Wrong credentials.";
+
+    }
+  };
+</script>
+
+
+</head>
+<body>
+
+<div class="login-card">
+  <h2>Login to StreetSupplyHub</h2>
+  <input type="email" id="loginEmail" placeholder="Email" required />
+  <input type="password" id="loginPassword" placeholder="Password" required />
+  <button onclick="loginUser()">Login</button>
+  <p id="loginMsg"></p>
+
+  <a href="index.html" class="link-btn">🏠 Back to Home</a>
+  <a href="register.html" class="link-btn">📝 Don't have an account? Register now</a>
+</div>
+
+</body>
+</html>

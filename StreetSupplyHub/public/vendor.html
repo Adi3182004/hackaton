@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendor Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap');
+    /* --- Styles unchanged for brevity --- */
+    body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: #f4f6f9; color: #333; }
+    header { background: linear-gradient(90deg, #6d1fd9, #00796b); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-radius: 0 0 16px 16px; }
+    .logo { width: 50px; height: auto; margin-right: 12px; }
+    header h2 { margin: 0; font-size: 1.4rem; font-weight: 500; }
+    .location-category { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; align-items: center; }
+    .location-category input { padding: 6px 10px; border-radius: 6px; border: none; background: #fff; color: #333; }
+    .edit-btn { background: #ffffff; border: 1px solid #ccc; color: #00796b; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+    .edit-btn:hover { background-color: #eee; }
+    .profile-icon { width: 44px; height: 44px; border-radius: 50%; background-color: white; color: #6d1fd9; font-size: 22px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 4px rgba(0,0,0,0.1); }
+    .buttons-nav { margin: 2rem 1rem; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .buttons-nav button { padding: 0.8rem 1.4rem; background-color: #00796b; color: white; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease; }
+    .buttons-nav button:hover { background-color: #005c47; }
+    .section { display: none; margin: 1.5rem; padding: 2rem; background: white; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
+    .section.active { display: block; }
+    .section h2 { color: #00796b; margin-bottom: 1.2rem; font-weight: 600; }
+    .form-item { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .form-item input, .form-item select { padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; flex: 1; min-width: 150px; }
+    .section button { padding: 0.6rem 1.2rem; background-color: #6d1fd9; color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; margin-right: 10px; transition: background 0.3s ease; }
+    .section button:hover { background-color: #512baf; }
+    .deal-box { background: #fff7d6; padding: 1rem; border: 2px dashed #e6b800; border-radius: 12px; font-size: 1rem; }
+    .order-card { background: #eef1f5; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    @media (max-width: 600px) {
+      .form-item { flex-direction: column; }
+      .buttons-nav { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <img src="logo.jpg" alt="Logo" class="logo" />
+    <div>
+      <h2>Welcome back, <span id="vendorName">Vendor Name</span>!</h2>
+      <div class="location-category">
+        <label>📍 Location: <input type="text" id="location" disabled></label>
+        <label>🍽️ Category: <input type="text" id="category" disabled></label>
+        <button class="edit-btn" onclick="toggleEdit()">Edit</button>
+      </div>
+    </div>
+  </div>
+  <div class="profile-icon">👤</div>
+</header>
+
+<div class="buttons-nav">
+  <button onclick="showSection('requirements')">Set Daily/Weekly Requirements</button>
+  <button onclick="showSection('suppliers')">Browse Suppliers</button>
+  <button onclick="showSection('deal')">Today’s Best Deal</button>
+  <button onclick="showSection('orders')">Your Orders</button>
+</div>
+
+<div class="section" id="requirements">
+  <h2>Daily/Weekly Requirements</h2>
+  <div class="form-item">
+    <input type="text" id="itemName" placeholder="Item Name">
+    <input type="number" id="quantity" placeholder="Quantity">
+    <select id="frequency">
+      <option value="daily">Daily</option>
+      <option value="weekly">Weekly</option>
+    </select>
+  </div>
+  <button onclick="addRequirement()">+ Add Item</button>
+  <button onclick="saveRequirements()">Save Requirements</button>
+  <ul id="requirementsList" style="margin-top: 1rem;"></ul>
+</div>
+
+<div class="section" id="suppliers">
+  <h2>Browse Suppliers</h2>
+  <select id="filterCategory" onchange="filterSuppliers()" style="padding: 8px; margin-bottom: 10px;">
+    <option value="all">All Categories</option>
+    <option value="vegetables">Vegetables</option>
+    <option value="grains">Grains</option>
+    <option value="dairy">Dairy</option>
+    <option value="spices">Spices</option>
+  </select>
+  <input type="text" id="searchSupplier" placeholder="Search by name..." oninput="filterSuppliers()" style="padding: 10px; width: 100%; margin-bottom: 10px;">
+  <div id="supplierList"></div>
+</div>
+
+<div class="section" id="deal">
+  <h2>Today’s Best Deals</h2>
+  <div class="deal-box">
+    <strong>20% off on Tomatoes</strong><br>
+    From: GreenHarvest, ₹32/kg<br>
+    ⏳ Deal ends in: <span id="timer">01:59:59</span><br>
+    <button style="margin-top:10px;">Order Now</button>
+  </div>
+</div>
+
+<div class="section" id="orders">
+  <h2>Your Orders</h2>
+  <div class="order-card">
+    <strong>Pending</strong><br>
+    Items: Onions, Tomatoes<br>
+    Supplier: FreshFarm<br>
+    ₹120 total<br>
+    <button onclick="trackDelivery('Order Pending. Preparing to dispatch...')">Track Delivery</button>
+  </div>
+</div>
+
+<script type="module">
+  import { db } from './firebase.js';
+  import {
+    collection, getDocs
+  } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  let allSuppliers = [];
+
+  async function loadSuppliersFromFirebase() {
+    const snapshot = await getDocs(collection(db, "supplierProducts"));
+    allSuppliers = snapshot.docs.map(doc => doc.data());
+    renderSuppliers(allSuppliers);
+  }
+
+  function renderSuppliers(data) {
+    const container = document.getElementById("supplierList");
+    if (!container) return;
+    container.innerHTML = data.map(s => `
+      <div class="order-card">
+        <strong>${s.name}</strong><br>
+        Category: ${s.category || 'N/A'}<br>
+        Description: ${s.desc || ''}<br>
+        Contact: ${s.contactNumber || 'N/A'}<br>
+        <button onclick="alert('📦 Order from ${s.name} placed!')">Place Order</button>
+        <button onclick="alert('👥 You joined group order with ${s.name}')">Join Group Order</button>
+      </div>
+    `).join('');
+  }
+
+  window.filterSuppliers = function () {
+    const keyword = document.getElementById("searchSupplier").value.toLowerCase();
+    const category = document.getElementById("filterCategory").value;
+    const filtered = allSuppliers.filter(s =>
+      (category === 'all' || s.category === category) &&
+      s.name.toLowerCase().includes(keyword)
+    );
+    renderSuppliers(filtered);
+  };
+
+  window.onload = () => {
+    document.getElementById("location").value = "Mumbai";
+    document.getElementById("category").value = "Snacks";
+    loadSuppliersFromFirebase();
+    
+    let countdown = 2 * 60 * 60;
+    const timerEl = document.getElementById("timer");
+    setInterval(() => {
+      if (countdown <= 0) return;
+      countdown--;
+      const hrs = String(Math.floor(countdown / 3600)).padStart(2, '0');
+      const mins = String(Math.floor((countdown % 3600) / 60)).padStart(2, '0');
+      const secs = String(countdown % 60).padStart(2, '0');
+      timerEl.textContent = `${hrs}:${mins}:${secs}`;
+    }, 1000);
+  };
+
+  window.showSection = function(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  };
+
+  window.toggleEdit = function () {
+    const location = document.getElementById('location');
+    const category = document.getElementById('category');
+    const editBtn = document.querySelector('.edit-btn');
+    const isDisabled = location.disabled;
+    location.disabled = !isDisabled;
+    category.disabled = !isDisabled;
+    editBtn.textContent = isDisabled ? 'Save' : 'Edit';
+    if (!isDisabled) alert('✅ Changes saved successfully!');
+  };
+
+  let requirements = [];
+
+  window.addRequirement = function () {
+    const name = document.getElementById('itemName').value;
+    const qty = document.getElementById('quantity').value;
+    const freq = document.getElementById('frequency').value;
+    if (!name || !qty) return alert("Please fill all fields.");
+    requirements.push({ name, qty, freq });
+    document.getElementById('requirementsList').innerHTML = requirements.map(r =>
+      `<li>${r.qty} x ${r.name} (${r.freq})</li>`).join('');
+    document.getElementById('itemName').value = '';
+    document.getElementById('quantity').value = '';
+  };
+
+  window.saveRequirements = function () {
+    if (requirements.length === 0) {
+      alert("No requirements to save.");
+      return;
+    }
+    localStorage.setItem("vendorRequirements", JSON.stringify(requirements));
+    alert("✅ Requirements saved locally!");
+  };
+
+  window.trackDelivery = function (msg) {
+    alert("📦 Delivery Status:\n\n" + msg);
+  };
+
+  document.querySelector(".profile-icon").addEventListener("click", () => {
+    const vendorName = document.getElementById("vendorName").textContent;
+    const location = document.getElementById("location").value;
+    const category = document.getElementById("category").value;
+    alert(`📋 Vendor Profile:\n\n👤 Name: ${vendorName}\n📍 Location: ${location}\n🍽️ Category: ${category}`);
+  });
+</script>
+
+</body>
+</html>
