@@ -3,7 +3,7 @@
 *A streamlined supply chain solution for India’s street food ecosystem.*  
 Built for the Tutedude Web Development Hackathon 1.0.
 
-## 🚀 About the Project
+## 🚀 About the Projects
 
 StreetSupplyHub is a full-stack web application that bridges the gap between *street food vendors* and *raw material suppliers*, solving real-world challenges of inconsistent supply, lack of verified vendors, and zero visibility into stock and pricing. Our platform brings the entire food stall supply chain online — fast, affordable, and fraud-free.
 
